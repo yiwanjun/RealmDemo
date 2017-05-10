@@ -66,7 +66,6 @@ class RealmDemoTests: XCTestCase {
     func testQuryAllRecord()  {
         let records = RecordModel.quryAllRecord()
         print(records)
-        
     }
     
     //查询某一天的数据
