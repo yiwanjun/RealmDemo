@@ -15,8 +15,24 @@ class RecordDataHelper: NSObject {
     let realmManager = RealmManager.sharedInstance
     
     //向插入数据
-    func insert(_ item: RecordModel) -> Bool {
+    open class func insert(_ item: RecordModel) -> Bool {
        return RealmManager.sharedInstance.insert(item)
+    }
+    //删除数据
+    open class func delete(_ item: RecordModel) -> Bool{
+        return RealmManager.sharedInstance.delete(item: item)
+    }
+    //删除所有数据
+    open class func deleteAll() -> Bool{
+        return RealmManager.sharedInstance.deleteAll()
+    }
+    //更新不受管理的对象
+    open class func update<T: Object>(item: T) -> Bool{
+        return RealmManager.sharedInstance.update(item: item)
+    }
+    //更新受管理的对象
+    open class func update( withClosures closures: @escaping (() throws -> Void)){
+        return RealmManager.sharedInstance.update(withClosures: closures)
     }
     //查询所有的数据
     open class func query<T: Object>(type: T.Type) -> Results<T> {

@@ -34,27 +34,18 @@ class RealmDemoTests: XCTestCase {
         }
     }
     func testRecordSave(){
-        //改变count决定生成数据多少
-        let count = 9
-        
-        for i in 0..<count {
-            for j in 0..<count {
-                for k in 0..<count {
-                    let record = RecordModel()
-                    record.recordId = Int( NSDate().timeIntervalSince1970)
-                    record.category = Int(arc4random_uniform(6))
-                    record.level = Int(arc4random_uniform(6))
-                    record.day = Int(arc4random_uniform(30))
-                    record.during = Int(arc4random_uniform(60))
-                    record.date = Date(timeIntervalSince1970: TimeInterval(1481000000 + i * 1000000 + j * 100000 + k * 10000 + k * 1000 ))
-                    record.tmp7 = Int( record.date.timeIntervalSince1970)
-                    let successed = RealmManager.sharedInstance.insert(record)
-                    XCTAssert(successed, "保存失败")
-                    sleep(1)
-                    print("完成一次 : ", i * count * count + j * count + k )
-                }
-            }
-        }
+        let record = RecordModel()
+        record.recordId = Int(Date().timeIntervalSinceNow)
+        record.category = Int(arc4random_uniform(6))
+        record.level    = Int(arc4random_uniform(6))
+        record.day      = Int(arc4random_uniform(30))
+        let successed = RecordModel.insert(record)
+        assert(successed, "添加数据失败")
+    }
+    
+    //批量数据插入，tests中不生效
+    func testBigDate(){
+        RecordModel.allARCData()
     }
     
     func dateToString(date: Date) -> String {
@@ -66,6 +57,7 @@ class RealmDemoTests: XCTestCase {
     func testQuryAllRecord()  {
         let records = RecordModel.quryAllRecord()
         print(records)
+        
     }
     
     //查询某一天的数据
@@ -98,5 +90,20 @@ class RealmDemoTests: XCTestCase {
     func testQueryLatestThirtyDays(){
         let records = RecordModel.queryLatestThirtyDays()
         print(records)
+    }
+    //重置某类别某难度的数据,注意这里的更新只限于受管理的对象
+    func testReset() {
+        let records = RecordModel.queryCategoryAndLevel(category: RecordModel.Category.abs, level: RecordModel.Level.advanced1)
+        print(records)
+        records.forEach { (record) in
+            RecordModel.update(withClosures: { 
+                record.reset = true
+            })
+        }
+    }
+    
+    //重复插入数据
+    func testRepeatInsert(){
+        
     }
 }

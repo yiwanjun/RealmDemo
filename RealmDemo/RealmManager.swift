@@ -67,6 +67,13 @@ class RealmManager: NSObject {
         
     }
     
+    func update( withClosures closures: @escaping (() throws -> Swift.Void)){
+        do {
+            try self.realm.write(closures)
+        } catch  {
+            print(error)
+        }
+    }
     
     //删除指定的元素
     func delete<T: Object>(item: T) -> Bool {
