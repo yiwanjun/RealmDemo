@@ -10,7 +10,7 @@ import UIKit
 import Foundation
 import RealmSwift
 
-class RecordDataManager: NSObject {
+class RecordDataHelper: NSObject {
     
     let realmManager = RealmManager.sharedInstance
     
@@ -25,34 +25,34 @@ class RecordDataManager: NSObject {
     }
     //查询某类别的数据
     open class func queryByCategory<T: Object>(category : Int ,type: T.Type) -> Results<T> {
-        let predicate = String(format: "category == %d", category as CVarArg)
-        let items = RealmManager.sharedInstance.query(type: type, filterStr: predicate)
+        let predicate = NSPredicate(format: "category == %d", category as CVarArg)
+        let items = RealmManager.sharedInstance.query(type: type, withPredicate: predicate)
         return items
     }
     //查询某类别某难度的数据
     open class func queryByCategoryAndLevel<T: Object>(category: Int ,level: Int, type: T.Type) -> Results<T>{
-        let predicate = String(format: "category == %d AND level == %d",category as CVarArg,level as CVarArg)
-        let items = RealmManager.sharedInstance.query(type: type, filterStr: predicate)
+        let predicate = NSPredicate(format: "category == %d AND level == %d",category as CVarArg,level as CVarArg)
+        let items = RealmManager.sharedInstance.query(type: type, withPredicate: predicate)
         return items
     }
     //查询某类别最近的一条数据
     open class func queryByCategoryLatest<T: Object>(category: Int,type: T.Type) -> Object? {
-        let predicate = String(format: "category == %d", category as CVarArg)
-        let items = RealmManager.sharedInstance.query(type: type, filterStr: predicate)
+        let predicate = NSPredicate(format: "category == %d", category as CVarArg)
+        let items = RealmManager.sharedInstance.query(type: type, withPredicate: predicate)
         return items.last
     }
     //查询最近30天的数据
     open class func queryByLatestThirtyDays<T: Object>(type: T.Type) -> Results<T>{
         let minDate = Date() - 3600 * 24 * 30
-        let predicate = String(format: "date >= %@", minDate as CVarArg)
-        let items = RealmManager.sharedInstance.query(type: type, filterStr: predicate)
+        let predicate = NSPredicate(format: "date >= %@", minDate as CVarArg)
+        let items = RealmManager.sharedInstance.query(type: type, withPredicate: predicate)
         return items
     }
     //查询当天的数据
     open class func queryDay<T: Object>(date :Date , type: T.Type) -> Results<T>{
         let zeroDay = zeroDayDate(date: date)
-        let predicate = String(format: "date >= %@ AND date <= %@" , zeroDay as CVarArg,(zeroDay + 3600 * 24) as CVarArg  )
-        let items = RealmManager.sharedInstance.query(type: type, filterStr: predicate)
+        let predicate = NSPredicate(format: "date >= %@ AND date <= %@" , zeroDay as CVarArg,(zeroDay + 3600 * 24) as CVarArg  )
+        let items = RealmManager.sharedInstance.query(type: type, withPredicate: predicate)
         return items
     }
     //查询当月的数据
@@ -60,13 +60,13 @@ class RecordDataManager: NSObject {
         let minDate = zeroMonthDate(date: date)
         let dayCount = daysOfMonth(withDate: date)
         let maxDate = minDate + 3600 * 24 * TimeInterval(dayCount)
-        let predicate = String(format: "date >= %@ AND date <= %@" , minDate as CVarArg,maxDate as CVarArg )
-        let items = RealmManager.sharedInstance.query(type: type, filterStr: predicate)
+        let predicate = NSPredicate(format: "date >= %@ AND date <= %@" , minDate as CVarArg,maxDate as CVarArg )
+        let items = RealmManager.sharedInstance.query(type: type, withPredicate: predicate)
         return items
     }
     
 }
-extension RecordDataManager{
+extension RecordDataHelper{
 
     //获取当天0时的时间戳
     fileprivate class func zeroDayDate(date: Date) -> Date {
@@ -91,4 +91,10 @@ extension RecordDataManager{
         return daysInMonth.length
     }
 }
-    
+
+extension RealmManager{
+    func query<T: Object>(type: T.Type,withPredicate fileter: NSPredicate) ->Results<T>  {
+        return realm.objects(type).filter(fileter)
+    }
+}
+

@@ -59,39 +59,38 @@ class RecordModel: Object {
 extension RecordModel{
     //查询所有数据
     open class func quryAllRecord() -> Results<RecordModel> {
-        let records = RecordDataManager.query(type: RecordModel.self)
+        let records = RecordDataHelper.query(type: RecordModel.self)
         return records
     }
     
     //查询某一天的数据
     open class func queryToday(date: Date) -> Results<RecordModel>{
-        let records = RecordDataManager.queryDay(date: date, type: self)
+        let records = RecordDataHelper.queryDay(date: date, type: self)
         return records
     }
     //查询某月的数据
     open class func queryMonth(date: Date) -> Results<RecordModel>{
-        let records = RecordDataManager.queryMonth(date: date, type: self)
-        //        assert(records.count == 96, "记录数量不对")
+        let records = RecordDataHelper.queryMonth(date: date, type: self)
         return records
     }
     //查询某类别的数据
     open class func queryCategory(category: Int) -> Results<RecordModel>{
-        let records = RecordDataManager.queryByCategory(category: category, type: self)
+        let records = RecordDataHelper.queryByCategory(category: category, type: self)
         return records
     }
     //查询某类别某难度的数据
     open class func queryCategoryAndLevel(category: Int, level: Int) -> Results<RecordModel>{
-        let records = RecordDataManager.queryByCategoryAndLevel(category: category,level: level, type: self)
+        let records = RecordDataHelper.queryByCategoryAndLevel(category: category,level: level, type: self)
         return records
     }
     //查询某类别的最近的一条数据
     open class func queryCategoryLatest(category: Int) -> RecordModel{
-        let record: RecordModel = RecordDataManager.queryByCategoryLatest(category: category, type: self) as! RecordModel
+        let record: RecordModel = RecordDataHelper.queryByCategoryLatest(category: category, type: self) as! RecordModel
         return record
     }
     //查询最近30天的数据
     open class func queryLatestThirtyDays() -> Results<RecordModel>{
-        let records = RecordDataManager.queryByLatestThirtyDays(type: RecordModel.self)
+        let records = RecordDataHelper.queryByLatestThirtyDays(type: RecordModel.self)
         return records
     }
 }
