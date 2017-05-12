@@ -92,6 +92,11 @@ extension RecordModel{
         let records = RecordDataHelper.queryMonth(date: date, type: self)
         return records
     }
+    //查询某年的数据
+    open class func queryYear(date: Date) -> Results<RecordModel>{
+        let records = RecordDataHelper.queryYear(date: date, type: self)
+        return records
+    }
     //查询某类别的数据
     open class func queryCategory(category: Int) -> Results<RecordModel>{
         let records = RecordDataHelper.queryByCategory(category: category, type: self)
@@ -120,18 +125,19 @@ extension RecordModel{
             autoreleasepool {
                 do {
                     let realm = try Realm()
-                    let count = 5
+                    let count = 2
                     for i in 0..<count {
                         realm.beginWrite()
                         for j in 0..<count {
                             for k in 0..<count{
+                                let date = Date(timeIntervalSince1970: TimeInterval(1400000000 + i * 1000000 + j * 100000 + k * 10000 + k * 1000 ))
                                 realm.create(RecordModel.self, value: [
-                                    "recordId": Int( NSDate().timeIntervalSince1970) + i*count*count + j*count + k,
+                                    "recordId": Int( date.timeIntervalSince1970) + i*count*count + j*count + k,
                                     "category": Int(arc4random_uniform(6)),
                                     "level": Int(arc4random_uniform(6)),
                                     "day" : Int(arc4random_uniform(30)),
                                     "during" : Int(arc4random_uniform(60)),
-                                    "date": Date(timeIntervalSince1970: TimeInterval(1481000000 + i * 1000000 + j * 100000 + k * 10000 + k * 1000 ))
+                                    "date": date
                                     ])
                             }
                         }

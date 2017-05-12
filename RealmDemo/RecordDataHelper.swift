@@ -80,6 +80,15 @@ class RecordDataHelper: NSObject {
         let items = RealmManager.sharedInstance.query(type: type, withPredicate: predicate)
         return items
     }
+    //查询当年的数据
+    open class func queryYear<T: Object>(date: Date, type: T.Type) -> Results<T>{
+        let minDate = zeroYearDate(date: date)
+        let dayCount = daysOfYear(withDate: date)
+        let maxDate = minDate + 3600 * 24 * TimeInterval(dayCount)
+        let predicate = NSPredicate(format: "date >= %@ AND date <= %@", minDate as CVarArg, maxDate as CVarArg)
+        let items = RealmManager.sharedInstance.query(type: type, withPredicate: predicate).sorted(byKeyPath: "date")
+        return items
+    }
     
 }
 extension RecordDataHelper{
@@ -91,7 +100,6 @@ extension RecordDataHelper{
         compon.timeZone = NSTimeZone.system as TimeZone
         let newDateTimeInter = cal.date(from: compon)?.timeIntervalSince1970
         return Date(timeIntervalSince1970: newDateTimeInter!)
-        
     }
     //获取当月第一天0时的时间戳
     fileprivate class func zeroMonthDate(date: Date) -> Date {
@@ -101,10 +109,32 @@ extension RecordDataHelper{
         let newDateTimeInter = cal.date(from: compon)?.timeIntervalSince1970
         return Date(timeIntervalSince1970: newDateTimeInter!)
     }
+    //获取当年第一天0时的时间戳
+    fileprivate class func zeroYearDate(date: Date) -> Date{
+        let cal = Calendar.current
+        var compon = cal.dateComponents([.year], from: date)
+        compon.timeZone = NSTimeZone.system as TimeZone
+        let newDateTimeInter = cal.date(from: compon)?.timeIntervalSince1970
+        return Date(timeIntervalSince1970: newDateTimeInter!)
+        
+        
+    }
     //获取当月有多少天
     fileprivate class func daysOfMonth( withDate date: Date) -> Int{
-        let daysInMonth = (Foundation.Calendar.current as NSCalendar).range(of: .day, in: .month, for: date)
-        return daysInMonth.length
+        let days = (Foundation.Calendar.current as NSCalendar).range(of: .day, in: .month, for: date)
+        return days.length
+    }
+    //获取一年有多少天
+    fileprivate class func daysOfYear( withDate date: Date) -> Int{
+        let calendar = Calendar.current as NSCalendar
+        var comps: DateComponents = calendar.components([NSCalendar.Unit.year , NSCalendar.Unit.month , NSCalendar.Unit.day], from: Date())
+        var count: Int = 0
+        for i in 1...12 {
+            comps.month = i
+            let range: NSRange = calendar.range(of: NSCalendar.Unit.day, in: NSCalendar.Unit.month, for: calendar.date(from: comps)!)
+            count += range.length
+        }
+        return count
     }
 }
 

@@ -11,5 +11,5 @@ import RealmSwift
 
 class Person: Object {
     dynamic var name = ""
-    dynamic var birthday = Date()
+    dynamic var birthday = 0
 }
