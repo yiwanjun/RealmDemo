@@ -116,8 +116,6 @@ extension RecordDataHelper{
         compon.timeZone = NSTimeZone.system as TimeZone
         let newDateTimeInter = cal.date(from: compon)?.timeIntervalSince1970
         return Date(timeIntervalSince1970: newDateTimeInter!)
-        
-        
     }
     //获取当月有多少天
     fileprivate class func daysOfMonth( withDate date: Date) -> Int{
